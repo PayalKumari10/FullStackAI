@@ -10,6 +10,7 @@ def require_admin(func):
             return func(user_role)
     return wrapper   
 
+
 @require_admin
 def acess_tea_inventory(role):
     print("Access granted to tea inventory")
