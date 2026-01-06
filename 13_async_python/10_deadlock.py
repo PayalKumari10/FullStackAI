@@ -9,6 +9,7 @@ def task1():
         with lock_b:
             print("Task 1 acquired lock b")
 
+
 def task2():
     with lock_b:
         print("Task 2 acquried lock b")
@@ -20,3 +21,5 @@ t2 = threading.Thread(target=task2)
 
 t1.start()
 t2.start()
+
+
