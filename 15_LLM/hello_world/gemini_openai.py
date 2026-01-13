@@ -1,20 +1,35 @@
 from openai import OpenAI
+
 client = OpenAI(
-    api_key="gemini_api_key",
+    api_key="AIzaSyDTFgC2x8V5lAAeykAykL3H6sTuau431xQ",
     base_url="https://generativelanguage.googleapis.com/v1beta/"
 )
 
-
-response = client.chat.completions.create(
+response = client.responses.create(
     model="gemini-1.5-flash",
-    n=1,
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant."},
+    input=[
         {
             "role": "user",
-            "content": "Explain to me how AI works"
+            "content": [
+                {
+                    "type": "text",
+                    "text": (
+                        "You are an expert in Maths and only answer maths-related questions. "
+                        "If the query is not related to maths, say sorry and do not answer.\n\n"
+                        "Question: Solve (a + b) whole square."
+                    )
+                }
+            ]
         }
     ]
 )
 
-print(response.choices[0].message)
+print(response.output_text)
+
+
+
+
+
+
+
+
