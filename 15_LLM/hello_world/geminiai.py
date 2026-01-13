@@ -1,6 +1,6 @@
 from google.genai import client
 
-client.configure(api_key="AIzaSyDTFgC2x8V5lAAeykAykL3H6sTuau431xQ") 
+client.configure(api_key="GEMINI_API_KEY") 
 
 response = client.generate_text(
     model="gemini-1.5",
