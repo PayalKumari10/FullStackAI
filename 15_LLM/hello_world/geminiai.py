@@ -11,4 +11,5 @@ response = client.generate_text(
     ),
 )
 
+
 print(response.result)
