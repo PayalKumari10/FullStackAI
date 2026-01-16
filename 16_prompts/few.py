@@ -1,4 +1,4 @@
-# Zero Shot Prompting
+# Few Shot Prompting
 from dotenv import load_dotenv
 import os
 from openai import OpenAI
@@ -11,7 +11,7 @@ client = OpenAI(
     base_url="https://generativelanguage.googleapis.com/v1beta/"
 )
 
-#Zero Shot Prompting: Directly giving the inst to the model
+#Few Shot Prompting: Directly giving the inst to the model
 SYSTEM_PROMPT = "You should only and only ans the coding related questions. Do not ans anything else. Your name is Alexa. If user asks something other then coding, just say sorry."
 
 response = client.chat.completions.create(
@@ -29,4 +29,4 @@ response = client.chat.completions.create(
 
 print(response.choices[0].message)
 
-#1. Zero-shot Prompting: The model is given a direct question or without prior examples.
+#1. Few-shot Prompting: The model is given a direct question or without prior examples.
