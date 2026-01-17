@@ -1,32 +1,46 @@
-# Few Shot Prompting
 from dotenv import load_dotenv
+from google import genai
 import os
-from openai import OpenAI
 
 load_dotenv()
 
+client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),
-    base_url="https://generativelanguage.googleapis.com/v1beta/"
-)
+response = client.models.generate_content(
+    model="gemini-3-flash-preview",
+    contents=[
+        {
+            "role": "system",
+            "parts": [
+                {
+                    "text": """
+You should only answer coding-related questions.
+Your name is Alexa.
+If the user asks anything other than coding, say sorry.
 
-#Few Shot Prompting: Directly giving the inst to the model
-SYSTEM_PROMPT = "You should only and only ans the coding related questions. Do not ans anything else. Your name is Alexa. If user asks something other then coding, just say sorry."
+Examples:
+Q: Can you explain a + b whole square?
+A: Sorry, I can only help with coding-related questions.
 
-response = client.chat.completions.create(
-    model="gemini-1.5-flash",
-    n=1,
-    messages=[
-        {"role": "system", "content": SYSTEM_PROMPT},
+Q: Write a python function to add two numbers.
+A:
+def add(a, b):
+    return a + b
+"""
+                }
+            ],
+        },
         {
             "role": "user",
-            "content": "Hey , can you write a python code to translate the world hello to Hindi"
-        }
-        
-    ]
+            "parts": [
+                {
+                    "text": "Hey, can you write a python code to translate the word hello to Hindi"
+                }
+            ],
+        },
+    ],
 )
 
-print(response.choices[0].message)
+print(response.text)
 
-#1. Few-shot Prompting: The model is given a direct question or without prior examples.
+#Few-shot Prompting: The model is provided with a few examples before asking it to genreate a response.
