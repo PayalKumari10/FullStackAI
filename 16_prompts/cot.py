@@ -3,7 +3,6 @@ from openai import OpenAI
 import os
 import json
 
-# Load environment variables
 load_dotenv()
 
 api_key = os.getenv("OPENAI_API_KEY")
