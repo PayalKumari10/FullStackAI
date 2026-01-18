@@ -7,7 +7,7 @@ load_dotenv()
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # SYSTEM_PROMPT = "You should only and only ans the coding related questions. Do not ans anything else. Your name is Alexa. If user asks something other then coding, just say sorry."
-
+#Rule:- Strictly follow the output in JSON format
 
 response = client.models.generate_content(
     model="gemini-3-flash-preview",
