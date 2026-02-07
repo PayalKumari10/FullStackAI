@@ -16,7 +16,7 @@ response = client.chat.completions.create(
              },
              { "type": "image_url","image_url": {"url": "https://images.pexels.com/photos/4065617/pexels-photo-4065617.jpeg"}
               }
-         ]
+            ]
          }
     ]
 )
