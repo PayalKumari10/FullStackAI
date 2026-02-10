@@ -4,8 +4,16 @@ from typing import Annotated
 from langgraph.graph.message import add_messages
 from langgraph.graph import StateGraph,START,END
 from langchain.chat_models import init_chat_model
+from langgraph.checkpoint.mongodb import MongoDBSaver
+
+import os
+
 
 load_dotenv()
+
+
+DB_URI = os.getenv("DB_URI")
+print("DB_URI:", DB_URI)
 
 llm = init_chat_model(
     model="gpt-4.1-mini",
@@ -20,28 +28,46 @@ def chatboat(state: State):
     response = llm.invoke(state.get("messages"))
     return { "messages": [response]}
  
-def samplenode(state: State):
-    print("\n\nInside samplenode node", state)
-    return { "messages": state["messages"] + ["Sample Message Appended"]}
 
 graph_builder = StateGraph(State)
 
 graph_builder.add_node("chatboat", chatboat)
-graph_builder.add_node("samplenode", samplenode)
+
 
 graph_builder.add_edge(START, "chatboat")
-graph_builder.add_edge("chatboat", "samplenode")
-graph_builder.add_edge("samplenode", END)
+graph_builder.add_edge("chatboat", END)
 
 graph = graph_builder.compile()
 
+def compile_graph_with_checkpointer(checkpointer):
+    return  graph_builder.compile(checkpointer=checkpointer)
+   
+
+DB_URI = "mongodb://admin:admin@localhost:27017"
+with MongoDBSaver.from_conn_string(DB_URI) as checkpointer:
+   graph_with_checkpointer = compile_graph_with_checkpointer(checkpointer=checkpointer)
+
+   config = {
+      "configurable": {
+        "thread_id": "payal"
+      }
+    }
+
 # updated_state = graph.invoke(State({"messages": ["Hi, My name is Payal Kumari"]}))
 
-updated_state = graph.invoke(State({"messages": ["What is my name?"]}))
-print("\n\nupdated_state", updated_state)
+for chunk in graph_with_checkpointer.stream(
+    State({"messages": ["You know that I am learning Langraph"]}),
+    config,
+    stream_mode="values"
+    ):
+      chunk["messages"][-1].pretty_print()
 
 
-# Start -> chatboat -> samplenode -> END 
+
+
+# Start -> chatboat -> (END) 
+
 # state = { messages: ["Hey there"]}
 # node runs: chatbot(state: ["Hey there"]) -> ["Hi, This is a message from ChatBoat Node"]
-# state = { "messages": ["Hey there" , "Hi, This is a message from ChatBoat Node"]}
+
+# Checkpointer (piyush) = Hey, My name is Payal Kumari
