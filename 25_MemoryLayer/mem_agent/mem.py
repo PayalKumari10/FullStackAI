@@ -20,6 +20,15 @@ config = {
         "provider": "openai",
         "config": {"api_key": OPENAI_API_KEY, "model": "gpt-4.1-mini"},
     },
+    graph_store: {
+        provider: "neo4j",
+        config: {
+            "uri": os.getenv("NEO_CONNECTION_URI"),
+            "username": os.getenv("NEO_USERNAME"),
+            "password": os.getenv("NEO_PASSWORD"),
+        }
+    },
+
     "vector_store": {
         "provider": "qdrant",
         "config": {
