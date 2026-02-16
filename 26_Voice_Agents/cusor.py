@@ -9,12 +9,18 @@ import os
 
 import json
 
+import asyncio
+import speech_recognition as sr
+from openai.helpers import LocalAudioPlayer
+from openai import AsyncOpenAI
+
 from sympy import content 
 
 load_dotenv()
 
+
 client = OpenAI()
-async_client = AsyncOpenAI
+async_client = AsyncOpenAI ()
 
 async with async_client.audio.speech.with_streaming_resposne.create(
         # model="gpt-4o-mini-tts",
@@ -104,14 +110,22 @@ message_history = [
         "role": "system", "content": SYSTEM_PROMPT
     },
  ]
+r = sr.Recognizer()
+with sr.Microphone() as source:
+    r.adjust_for_ambient_noise(source)
+    r.pause_threshold = 2
 
 while True:
- user_query = input("👉")
- message_history.append({"role": "user", "content": user_query})
+   print("Speak Something...")
+   audio = r.listen(source)
 
-while True:
-    response = client.chat.completions.parse (
-        model="gpt-4o-mini",
+   print("Processing Audio...(STT)")
+   user_query = r.recognize.google(audio)
+   message_history.append({"role": "user", "content": user_query})
+
+   while True:
+      response = client.chat.completions.parse (
+        model="gpt-4.1",
         response_format={"type":"json_object"},
         messages = message_history
     )
@@ -141,8 +155,9 @@ while True:
 
     if parsed_result.step == "OUTPUT":   
         print("🤖", parsed_result.content)
+        asyncio.run(tts(speech=response.choices[0].message.content))
         break
 
-print("\n\n\n")
+    print("\n\n\n")
 
 
